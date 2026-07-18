@@ -177,8 +177,8 @@ p a { color: var(--gum); text-decoration: underline; text-underline-offset: 2px;
 }
 
 /* ---------- Gallery strip ---------- */
-.gallery-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.gallery-strip img { border-radius: var(--radius); border: 1px solid var(--ink-line); }
+.gallery-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+.gallery-strip img { border-radius: var(--radius); border: 1px solid var(--ink-line); width: 100%; }
 @media (max-width: 700px) { .gallery-strip { grid-template-columns: 1fr; } }
 
 /* ---------- Canon / lore entries ---------- */
