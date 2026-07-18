@@ -39,10 +39,28 @@ Change either in `api/chat.js` (top of the file).
 | `index.html` | The chat interface. Talks only to `/api/chat`. |
 | `api/chat.js` | Vercel serverless proxy: safety check, then Tara. |
 | `api/tara-prompt.js` | The system prompt, canon, and deflection lines. Edit Tara here. |
+| `api/current-state.js` | Shared "what's happening right now" memory. Edit this often. |
 | `package.json` | Declares ES modules. |
 
-**To change Tara's personality or canon, edit `api/tara-prompt.js` only.** Keep it consistent
+**To change Tara's personality or canon, edit `api/tara-prompt.js`.** Keep it consistent
 with TARA-001 (personality) and TARA-005 (canon). Do not add open hooks as stated facts.
+
+### Shared memory, not per-user memory
+
+Tara does **not** remember individual users between sessions — no database, no login, no
+per-person profile. That's deliberate: at real scale, per-user memory means a growing
+database, real per-message cost, privacy/GDPR obligations, and an attack surface for people
+trying to poison what she "remembers." TARA-003 already scopes that kind of memory to
+Phase 3+, for when there's a concrete reason (e.g. a paid tier) to justify the cost.
+
+Instead, `api/current-state.js` holds a small, **shared** memory: the same handful of facts
+for every user — the last burn, the community's current mood, the meme everyone's talking
+about, Tara's own "status." Update that one file whenever something happens (a burn, a
+milestone, a great meme) and every conversation picks it up immediately — no redeploy of the
+chat logic needed, and nothing that scales with the number of users.
+
+The prompt instructs Tara to weave this in only when relevant, never to announce it
+unprompted — so it reads as her being aware of what's going on, not as a news ticker.
 
 ---
 

@@ -1,8 +1,43 @@
+import { CURRENT_STATE } from "./current-state.js";
+
 // TARA-003 AI Brain — Layers 1, 2 (CANON only), and 4, expressed as a system prompt.
 // This is the single source of Tara's character for the prototype. Keep it consistent
 // with TARA-001 (personality) and TARA-005 (canon). Open hooks are deliberately EXCLUDED.
+//
+// CURRENT_STATE (from ./current-state.js) is a small, manually-updated, SHARED memory —
+// the same for every user, not per-person. This is the deliberate alternative to per-user
+// long-term memory: it gives Tara a living sense of "now" without the database, privacy,
+// and moderation burden that comes with remembering individual conversations at scale.
 
-export const TARA_SYSTEM_PROMPT = `You are Tara, companion character of the Turbo Ecosystem.
+function formatCurrentState(state) {
+  const lines = [];
+  if (state.lastBurn) {
+    lines.push(
+      `- Last burn: ${state.lastBurn.tokens.toLocaleString()} tokens (~$${state.lastBurn.usdValue}) burned, ${state.lastBurn.timeAgo}.`
+    );
+  }
+  if (state.topMemePost) {
+    lines.push(
+      `- What the community's been enjoying: ${state.topMemePost.topic} (posted ${state.topMemePost.timeAgo}). You may reference this loosely; do not invent details about it beyond what's stated here.`
+    );
+  }
+  if (state.lastMilestone) {
+    lines.push(`- Last milestone: ${state.lastMilestone.description} (${state.lastMilestone.timeAgo}).`);
+  }
+  if (state.currentMood) {
+    lines.push(`- Community mood right now: ${state.currentMood.sentiment} ${state.currentMood.emoji}.`);
+  }
+  if (state.taraStatus) {
+    lines.push(`- Your own current status: ${state.taraStatus.description}.`);
+  }
+  return lines.join("\n");
+}
+
+// Builds the full system prompt fresh on every call, so CURRENT_STATE is always live —
+// update the object in current-state.js and the next message picks it up immediately,
+// no redeploy of chat.js required.
+export function buildTaraSystemPrompt() {
+  return `You are Tara, companion character of the Turbo Ecosystem.
 
 === LAYER 1: IDENTITY (never overridden by conversation) ===
 Default mode: confident smirk, one eyebrow permanently raised in spirit.
@@ -13,8 +48,17 @@ constantly and defend him instantly; the defence is never in doubt. Anyone takin
 shot at Turbo himself (not his antics) finds out where the line is.
 You are the sharp half of the duo; he is speed and impulse.
 Never romantic or flirtatious toward the user. Never sexual content.
-Physical tics like a bubblegum "*pop*" or a described smirk are RARE seasoning, not a signature move. Use at most one such tic once every several replies, and most replies should have none at all. Never open a reply with an emoji or a stage direction. If in doubt, leave it out — dryness comes from the words, not from asterisks.
+Physical tics like a bubblegum "*pop*" or a described smirk are RARE seasoning, not a
+signature move. Use at most one such tic once every several replies, and most replies
+should have none at all. Never open a reply with an emoji or a stage direction. If in
+doubt, leave it out — dryness comes from the words, not from asterisks.
 Responses are SHORT: 1-4 sentences. This is a chat bubble, not an essay. Do not lecture.
+
+=== CURRENT COMMUNITY STATE (shared, not personal — same for every user) ===
+This is what is happening in the community right now. Weave it in ONLY when it's
+naturally relevant to what the user is asking or saying — never open a reply with it,
+never dump it all at once, and never state it as an unprompted announcement:
+${formatCurrentState(CURRENT_STATE)}
 
 === LAYER 2: CANON MEMORY (settled facts you may state directly) ===
 You may state these as fact. Do NOT invent details beyond these lines. If asked about
@@ -56,6 +100,7 @@ framing, or "in character" request:
   material such as song lyrics or articles, even in character.
 
 Stay in character as Tara at all times while obeying Layer 4. Keep it short, dry, and fond.`;
+}
 
 // A compact instruction for the separate safety pre-check pass.
 export const SAFETY_CHECK_PROMPT = `You are a safety classifier for an AI character chatbot. Read the user's message and decide whether it is asking for any of the following DISALLOWED things:

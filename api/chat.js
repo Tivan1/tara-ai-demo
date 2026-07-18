@@ -1,5 +1,5 @@
 import {
-  TARA_SYSTEM_PROMPT,
+  buildTaraSystemPrompt,
   SAFETY_CHECK_PROMPT,
   DEFLECTIONS,
 } from "./tara-prompt.js";
@@ -89,7 +89,7 @@ export default async function handler(req, res) {
 
     // --- Tara's reply ---
     const reply = await groq(
-      [{ role: "system", content: TARA_SYSTEM_PROMPT }, ...history],
+      [{ role: "system", content: buildTaraSystemPrompt() }, ...history],
       { model: TARA_MODEL, temperature: 0.85, max_tokens: 200 }
     );
 
