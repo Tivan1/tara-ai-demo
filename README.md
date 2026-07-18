@@ -1,11 +1,36 @@
-# AI-Tara — Phase 0 Prototype
+# Tara — Turbo Ecosystem Site
 
-A live, conversational Tara for the Turbo Ecosystem. Implements the TARA-003 architecture:
-Layer 1 (identity), Layer 2 (canon — CANON lines only, no open hooks), and Layer 4 (hard
-safety rules), the last of which runs as a **separate pre-check pass** that wraps the roleplay
+A small multi-page site for Tara: a homepage, the canon lore, a live "what's happening now"
+page, an honest Phase 0 progress tracker, three light zone pages (Marketplace, Laboratory,
+The Nest), and the live AI chat. Implements the TARA-003 architecture in the chat: Layer 1
+(identity), Layer 2 (canon — CANON lines only, no open hooks), and Layer 4 (hard safety
+rules), the last of which runs as a **separate pre-check pass** that wraps the roleplay
 rather than sitting inside it.
 
 This is a **conceptual prototype**. Nothing here is final or production-hardened.
+
+## Pages
+
+| Page | File | Notes |
+|------|------|-------|
+| Home | `index.html` | Hero, the duo, a meme gallery, links to everything else. |
+| Lore | `lore.html` | The origin + the four canon events. The one page with real prose. |
+| Last Events | `events.html` | Fetches `/api/events` live — same data Tara's prompt uses. |
+| Results | `results.html` | Honest Phase 0 checklist — live vs. coming. |
+| Marketplace | `marketplace.html` | Light zone page. Marked "coming, later phase." |
+| Laboratory | `laboratory.html` | Light zone page. Marked "coming, later phase." |
+| The Nest | `nest.html` | Overview tying the four zones together. |
+| Chat | `chat.html` | The live AI conversation (was the whole site before). |
+
+All pages share `/assets/styles.css` (one design system: dark ink, bubblegum pink, gold
+accents, the sticker motif from the character sheet) and `/assets/nav.js` (mobile menu
+toggle only — no other JS is shared).
+
+### Updating the Last Events page
+
+`events.html` fetches `/api/events`, a tiny read-only endpoint that just returns
+`api/current-state.js` as JSON. Edit `current-state.js` and both the chat and this page
+pick it up immediately — no rebuild step, nothing else to touch.
 
 ---
 
@@ -36,10 +61,15 @@ Change either in `api/chat.js` (top of the file).
 
 | File | What it is |
 |------|-----------|
-| `index.html` | The chat interface. Talks only to `/api/chat`. |
+| `index.html`, `lore.html`, `events.html`, `results.html`, `marketplace.html`, `laboratory.html`, `nest.html` | The static site pages. |
+| `chat.html` | The chat interface. Talks only to `/api/chat`. |
+| `assets/styles.css` | The shared design system — one file, every page. |
+| `assets/nav.js` | Mobile nav toggle. The only shared page script. |
+| `assets/*.jpg`, `assets/*.png` | Character art, used across the site. |
 | `api/chat.js` | Vercel serverless proxy: safety check, then Tara. |
 | `api/tara-prompt.js` | The system prompt, canon, and deflection lines. Edit Tara here. |
 | `api/current-state.js` | Shared "what's happening right now" memory. Edit this often. |
+| `api/events.js` | Read-only endpoint that serves `current-state.js` as JSON for `events.html`. |
 | `package.json` | Declares ES modules. |
 
 **To change Tara's personality or canon, edit `api/tara-prompt.js`.** Keep it consistent
@@ -91,7 +121,8 @@ git push -u origin main
    - Value: *(paste your Groq key)*
 5. Click **Deploy**.
 
-Vercel gives you a URL like `https://tara-ai-demo.vercel.app`. Open it — Tara greets you.
+Vercel gives you a URL like `https://tara-ai-demo.vercel.app`. Open it for the homepage,
+or add `/chat.html` to go straight to the conversation.
 
 > If you add the env var *after* the first deploy, trigger a redeploy so it takes effect
 > (Deployments → ⋯ → Redeploy).
