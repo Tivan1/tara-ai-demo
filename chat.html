@@ -39,9 +39,8 @@
   }
   .chat-brand { display: flex; align-items: center; gap: 12px; }
   .chat-sigil {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, var(--gum) 0%, var(--gum-deep) 70%);
-    position: relative; flex: none;
+    width: 38px; height: 38px; border-radius: 50%; flex: none;
+    object-fit: cover; object-position: 50% 20%;
     box-shadow: 0 0 0 4px rgba(255,95,162,0.12);
   }
   .chat-inhead h1 {
@@ -150,7 +149,7 @@
 <header class="site-header">
   <div class="wrap">
     <a class="wordmark" href="/index.html">
-      <span class="sigil" aria-hidden="true"></span>
+      <img class="sigil" src="/assets/tara-sunglasses.png" alt="" aria-hidden="true" />
       TARA<span class="tag">.</span>
     </a>
     <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
@@ -171,7 +170,7 @@
   <div class="shell">
     <div class="chat-inhead">
       <div class="chat-brand">
-        <div class="chat-sigil" aria-hidden="true"></div>
+        <img class="chat-sigil" src="/assets/tara-sunglasses.png" alt="" aria-hidden="true" />
         <div>
           <h1>Tara</h1>
           <div class="chat-tagline">Smarter. Sharper. Cuter.</div>
