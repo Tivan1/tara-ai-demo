@@ -66,7 +66,8 @@ Change either in `api/chat.js` (top of the file).
 | `assets/styles.css` | The shared design system — one file, every page. |
 | `assets/nav.js` | Mobile nav toggle. The only shared page script. |
 | `assets/*.jpg`, `assets/*.png` | Character art, used across the site. |
-| `api/chat.js` | Vercel serverless proxy: safety check, then Tara. |
+| `api/chat.js` | Vercel serverless proxy: safety check, then Tara. Web chat. |
+| `api/telegram.js` | Same Tara, wired to Telegram instead of the browser. Optional. |
 | `api/tara-prompt.js` | The system prompt, canon, and deflection lines. Edit Tara here. |
 | `api/current-state.js` | Shared "what's happening right now" memory. Edit this often. |
 | `api/events.js` | Read-only endpoint that serves `current-state.js` as JSON for `events.html`. |
@@ -134,6 +135,52 @@ cp .env.example .env.local     # paste your key into .env.local
 vercel dev
 ```
 Then open the local URL it prints. `vercel dev` runs the serverless function locally.
+
+---
+
+## Telegram bot (optional) — about 5 minutes, once the site above is deployed
+
+Same Tara, same canon, same safety layer — just a second front door. Reuses
+`api/tara-prompt.js` entirely; the only new file is `api/telegram.js`.
+
+**Behaviour:** DMs always get a reply. In a group, Tara only replies if she's
+`@mentioned` or someone replies to one of her own messages — never unsolicited.
+Telegram's own default Privacy Mode already withholds ordinary group chatter
+from reaching the bot at all; the code enforces the same rule again explicitly.
+
+### 1. Create the bot
+1. Open a chat with **@BotFather** on Telegram.
+2. Send `/newbot`, give it a display name (e.g. `Tara`) and a username ending
+   in `bot` (e.g. `TaraToadBot`).
+3. BotFather replies with a token — copy it.
+
+### 2. Add two environment variables in Vercel
+Same place as `GROQ_API_KEY` (Project Settings → Environment Variables):
+- `TELEGRAM_BOT_TOKEN` — the token from BotFather
+- `TELEGRAM_BOT_USERNAME` — the username, without the `@` (e.g. `TaraToadBot`)
+
+Redeploy after adding them.
+
+### 3. Point Telegram at your deployment
+One-time only. Paste this into a browser address bar (fill in your token and
+your actual Vercel domain):
+```
+https://api.telegram.org/bot<YOUR_TOKEN>/setWebhook?url=https://<YOUR-SITE>.vercel.app/api/telegram
+```
+A reply of `{"ok":true,"result":true,...}` means it's connected.
+
+### 4. Add her to the group
+Add the bot to the Tara Telegram group as a normal member (admin isn't
+required just to reply to mentions). Then test: DM the bot directly, and in
+the group, `@mention` her or reply to one of her messages.
+
+### Honest limits, specific to Telegram
+- **Per-chat memory is best-effort, not persistent.** Recent messages in a
+  conversation are held in the function's own memory to keep replies coherent
+  turn-to-turn. This resets on a redeploy or a cold start — by design, not a
+  bug. It is memory of a *chat*, never a profile of a *person*: the same
+  reasoning as `current-state.js`, applied here instead of a database.
+- Same Groq free-tier limits as the web chat apply, shared across both.
 
 ---
 
