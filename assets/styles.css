@@ -31,7 +31,7 @@ body {
     radial-gradient(90% 70% at 100% 0%, rgba(219, 165, 63, 0.08) 0%, transparent 50%),
     radial-gradient(120% 90% at 50% -10%, #221b28 0%, var(--ink) 55%) fixed;
   color: var(--cream);
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "Nunito", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100dvh;
   display: flex;
@@ -54,7 +54,7 @@ a { color: inherit; }
   height: 68px; gap: 18px;
 }
 .wordmark {
-  font-family: "Fraunces", serif; font-weight: 900; font-size: 25px;
+  font-family: "Bungee", cursive; font-weight: 400; font-size: 21px;
   letter-spacing: -0.02em; color: var(--cream); display: flex; align-items: center; gap: 10px;
   text-decoration: none; flex: none;
 }
@@ -86,7 +86,7 @@ nav.primary a.cta:hover { filter: brightness(1.08); }
 
 @media (max-width: 860px) {
   nav.primary { position: fixed; inset: 68px 0 0 0; background: var(--ink);
-    flex-direction: column; align-items: stretch; padding: 14px; gap: 2px;
+    flex-direction: column; flex-wrap: nowrap; align-items: stretch; padding: 14px; gap: 2px;
     transform: translateY(-8px); opacity: 0; pointer-events: none; transition: 0.18s; overflow-y: auto; }
   nav.primary.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
   nav.primary a { padding: 14px 16px; border-radius: var(--radius-sm); font-size: 15px; }
@@ -134,10 +134,11 @@ section + section { border-top: 1px solid var(--ink-line); }
   font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--gum);
   font-weight: 700; margin-bottom: 12px; display: block;
 }
-h1, h2, h3 { font-family: "Fraunces", serif; font-weight: 900; letter-spacing: -0.02em; line-height: 1.08; }
-h1 { font-size: clamp(38px, 6vw, 62px); }
-h2 { font-size: clamp(28px, 4vw, 40px); }
-h3 { font-size: 20px; font-weight: 600; }
+h1, h2 { font-family: "Bungee", cursive; font-weight: 400; letter-spacing: -0.01em; line-height: 1.12; }
+h3 { font-family: "Nunito", sans-serif; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; }
+h1 { font-size: clamp(34px, 5.5vw, 56px); }
+h2 { font-size: clamp(24px, 3.6vw, 34px); }
+h3 { font-size: 19px; }
 p.lede { font-size: 18px; color: var(--cream-dim); max-width: 60ch; line-height: 1.6; }
 p { line-height: 1.65; color: var(--cream-dim); }
 p a { color: var(--gum); text-decoration: underline; text-underline-offset: 2px; }
@@ -194,6 +195,38 @@ p a { color: var(--gum); text-decoration: underline; text-underline-offset: 2px;
   border-radius: var(--radius-sm); padding: 10px 14px; display: inline-block;
 }
 
+/* ---------- Quote strip ("In her own words") ---------- */
+.quote-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.quote-card {
+  background: var(--ink-soft); border: 1px solid var(--ink-line); border-radius: var(--radius);
+  padding: 24px 22px; position: relative; display: flex; flex-direction: column; gap: 10px;
+}
+.quote-card .mark {
+  font-family: "Bungee", cursive; font-size: 34px; font-weight: 400; color: var(--gum);
+  line-height: 0.6; opacity: 0.85;
+}
+.quote-card .trigger { font-size: 12.5px; color: var(--lilac); font-style: italic; }
+.quote-card .line { font-size: 16px; color: var(--cream); line-height: 1.5; font-weight: 500; }
+/* ---------- Sticker photos (scattered panel cutouts — the redesign signature) ---------- */
+.sticker-photo {
+  position: absolute; border: 5px solid var(--cream); border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.3);
+  overflow: hidden; z-index: 5;
+}
+.sticker-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sticker-photo::after {
+  content: ""; position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-4deg);
+  width: 34px; height: 16px; background: rgba(239, 217, 163, 0.55); border: 1px solid rgba(255,255,255,0.4);
+}
+.rot-3 { transform: rotate(-3deg); }
+.rot4 { transform: rotate(4deg); }
+.rot-6 { transform: rotate(-6deg); }
+.rot7 { transform: rotate(7deg); }
+.rot-2 { transform: rotate(-2deg); }
+
+@media (max-width: 860px) {
+  .sticker-photo.hide-mobile { display: none; }
+}
 /* ---------- Footer ---------- */
 footer.site-footer {
   border-top: 1px solid var(--ink-line); padding: 30px 0 max(30px, env(safe-area-inset-bottom));
@@ -214,8 +247,20 @@ footer.site-footer .foot-links a:hover { color: var(--gum); }
 .status-row .sub { font-size: 13px; color: var(--cream-dim); margin-top: 2px; }
 
 /* ---------- Events cards ---------- */
-.event-card .value { font-family: "Fraunces", serif; font-weight: 900; font-size: 26px; color: var(--cream); margin: 4px 0; }
+.event-card .value { font-family: "Bungee", cursive; font-weight: 400; font-size: 22px; color: var(--cream); margin: 4px 0; }
 .event-card .when { font-size: 12px; color: var(--lilac); }
+
+.collage-board { position: relative; height: 420px; margin: 24px 0 8px; }
+@media (max-width: 860px) {
+  .collage-board {
+    height: auto; display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+  }
+  .collage-board .sticker-photo {
+    position: static !important; transform: none !important; width: 130px !important; height: 130px !important;
+  }
+  .hero-art .sticker-photo { right: 4px !important; bottom: -14px !important; width: 84px !important; height: 84px !important; }
+  .hero-art .sticker-photo.hide-mobile { display: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
